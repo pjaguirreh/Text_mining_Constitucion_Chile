@@ -8,7 +8,7 @@ library(stringr)
 
 web1 <- read_html("https://www.senado.cl/constitucion-politica-capitulo-i-bases-de-la-institucionalidad/senado/2012-01-16/093048.html")
 
-cap1 <- web %>% html_nodes("strong~ p")
+cap1 <- web1 %>% html_nodes("strong~ p")
 
 cap1_text <- cap1 %>% 
   html_text() %>% 
@@ -43,7 +43,7 @@ cap1_text <- cap1 %>%
   filter(!is.na(art)) %>% 
   select(cap, nom_cap, art, texto = value)
 
-rm(web, cap1)
+rm(web1, cap1)
 
 ##-----------
 ## CAPÍTULO 2
@@ -71,8 +71,9 @@ cap2_text <- cap2 %>%
          value = str_replace(value, "º.-", ""),
          value = str_replace(value, "º .-", ""),
          value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", ""),
-         value = str_replace(value, "[0-9]+", "")) %>% 
+         value = str_replace(value, ".-", "")
+         #value = str_replace(value, "[0-9]+", "")
+         ) %>% 
   mutate(cap = "capítulo 2",
          nom_cap = "nacionalidad y ciudadanía") %>% 
   mutate(art = case_when(
@@ -117,8 +118,9 @@ cap3_text <- cap3 %>%
          value = str_replace(value, "º.-", ""),
          value = str_replace(value, "º .-", ""),
          value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", ""),
-         value = str_replace(value, "[0-9]+", "")) %>% 
+         value = str_replace(value, ".-", "")
+         #value = str_replace(value, "[0-9]+", "")
+         ) %>% 
   mutate(cap = "capítulo 3",
          nom_cap = "de los derechos y deberes constitucionales") %>% 
   mutate(art = case_when(
@@ -159,8 +161,9 @@ cap4_text <- cap4 %>%
          value = str_replace(value, "º.-", ""),
          value = str_replace(value, "º .-", ""),
          value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", ""),
-         value = str_replace(value, "[0-9]+", "")) %>% 
+         value = str_replace(value, ".-", "")
+         #value = str_replace(value, "[0-9]+", "")
+         ) %>% 
   mutate(cap = "capítulo 4",
          nom_cap = "gobierno") %>% 
   mutate(art = case_when(
@@ -196,6 +199,71 @@ rm(web4, cap4)
 ##---
 ## CAPÍTULO 5
 ##---
+
+web5 <- read_html("https://www.senado.cl/capitulo-v-congreso-nacional/senado/2012-01-16/100638.html")
+
+cap5 <- web5 %>% html_nodes(".CUERPO p")
+
+cap5_text <- cap5 %>% 
+  html_text() %>% 
+  tibble::enframe() %>% 
+  mutate(value = str_replace(value, "Â", " "),
+         value = str_replace(value, "Ã", "í"),
+         value = str_replace(value, "Ã", "í"),
+         value = str_replace(value, "Ã³", "ó"),
+         value = str_replace(value, "í³", "ó"),
+         value = str_replace(value, "Ã¡", "á"),
+         value = str_replace(value, "í¡", "á"),
+         value = str_replace(value, "í¡", "á"),
+         value = str_replace(value, "íº", "ú"),
+         value = str_replace(value, "í³", "ó"),
+         value = str_replace(value, "Ãº", "ú"),
+         value = str_replace(value, "í©", "é"),
+         value = str_replace(value, "º.-", ""),
+         value = str_replace(value, "º .-", ""),
+         value = str_replace(value, " .-", ""),
+         value = str_replace(value, ".-", "")
+         #value = str_replace(value, "[0-9]+", "")
+         ) %>% 
+  mutate(cap = "capítulo 5",
+         nom_cap = "congreso nacional") %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 46",
+    name %in% c(7) ~ "artículo 47",
+    name %in% c(10) ~ "artículo 48",
+    name %in% c(13,14) ~ "artículo 49",
+    name %in% c(16) ~ "artículo 50",
+    name %in% c(19) ~ "artículo 51",
+    name %in% c(24:26) ~ "artículo 52",
+    name %in% c(31) ~ "artículo 53",
+    name %in% c(36) ~ "artículo 54",
+    name %in% c(41) ~ "artículo 55",
+    name %in% c(44) ~ "artículo 56",
+    name %in% c(47,48) ~ "artículo 56 bis",
+    name %in% c(53) ~ "artículo 57",
+    name %in% c(56) ~ "artículo 58",
+    name %in% c(59) ~ "artículo 59",
+    name %in% c(62,63) ~ "artículo 60",
+    name %in% c(66) ~ "artículo 61",
+    name %in% c(69) ~ "artículo 62",
+    name %in% c(74) ~ "artículo 63",
+    name %in% c(77) ~ "artículo 64",
+    name %in% c(82) ~ "artículo 65",
+    name %in% c(85) ~ "artículo 66",
+    name %in% c(88) ~ "artículo 67",
+    name %in% c(91) ~ "artículo 68",
+    name %in% c(94) ~ "artículo 69",
+    name %in% c(97) ~ "artículo 70",
+    name %in% c(100) ~ "artículo 71",
+    name %in% c(103) ~ "artículo 72",
+    name %in% c(106) ~ "artículo 73",
+    name %in% c(109) ~ "artículo 74",
+    name %in% c(112) ~ "artículo 75"
+  )) %>% 
+  filter(!is.na(art)) %>% 
+  select(cap, nom_cap, art, texto = value)
+
+rm(web5, cap5)
 
 ##---
 ## CAPÍTULO 6
