@@ -1,6 +1,37 @@
 library(rvest)
 library(dplyr)
 library(stringr)
+library(readxl)
+
+links <- read_excel("links_constitucion.xlsx")
+
+for (i in 1:15){
+  assign(paste0("cap", i, "_text"),
+         
+         links[i, 2][[1]] %>% 
+           read_html() %>% 
+           html_nodes(".CUERPO p") %>% 
+           html_text() %>% 
+           tibble::enframe() %>% 
+           mutate(value = str_replace(value, "Â", " "),
+                  value = str_replace(value, "Ã", "í"),
+                  value = str_replace(value, "Ã", "í"),
+                  value = str_replace(value, "Ã³", "ó"),
+                  value = str_replace(value, "í³", "ó"),
+                  value = str_replace(value, "Ã¡", "á"),
+                  value = str_replace(value, "í¡", "á"),
+                  value = str_replace(value, "íº", "ú"),
+                  value = str_replace(value, "í³", "ó"),
+                  value = str_replace(value, "Ãº", "ú"),
+                  value = str_replace(value, "í©", "é"),
+                  value = str_replace(value, "º.-", ""),
+                  value = str_replace(value, "º .-", ""),
+                  value = str_replace(value, " .-", "")) %>% 
+           mutate(cap = links[i, 1][[1]],
+                  nom_cap = links[i, 3][[1]])
+         
+  )
+}
 
 ##-----------
 ## CAPÍTULO 1
@@ -73,7 +104,7 @@ cap2_text <- cap2 %>%
          value = str_replace(value, " .-", ""),
          value = str_replace(value, ".-", "")
          #value = str_replace(value, "[0-9]+", "")
-         ) %>% 
+  ) %>% 
   mutate(cap = "capítulo 2",
          nom_cap = "nacionalidad y ciudadanía") %>% 
   mutate(art = case_when(
@@ -120,7 +151,7 @@ cap3_text <- cap3 %>%
          value = str_replace(value, " .-", ""),
          value = str_replace(value, ".-", "")
          #value = str_replace(value, "[0-9]+", "")
-         ) %>% 
+  ) %>% 
   mutate(cap = "capítulo 3",
          nom_cap = "de los derechos y deberes constitucionales") %>% 
   mutate(art = case_when(
@@ -163,7 +194,7 @@ cap4_text <- cap4 %>%
          value = str_replace(value, " .-", ""),
          value = str_replace(value, ".-", "")
          #value = str_replace(value, "[0-9]+", "")
-         ) %>% 
+  ) %>% 
   mutate(cap = "capítulo 4",
          nom_cap = "gobierno") %>% 
   mutate(art = case_when(
@@ -224,7 +255,7 @@ cap5_text <- cap5 %>%
          value = str_replace(value, " .-", ""),
          value = str_replace(value, ".-", "")
          #value = str_replace(value, "[0-9]+", "")
-         ) %>% 
+  ) %>% 
   mutate(cap = "capítulo 5",
          nom_cap = "congreso nacional") %>% 
   mutate(art = case_when(
