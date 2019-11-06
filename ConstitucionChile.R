@@ -5,6 +5,8 @@ library(readxl)
 
 links <- read_excel("links_constitucion.xlsx")
 
+## aa
+
 for (i in 1:15){
   assign(paste0("cap", i, "_text"),
          
