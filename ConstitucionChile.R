@@ -21,6 +21,7 @@ for (i in 1:16){
                   value = str_replace(value, "í³", "ó"),
                   value = str_replace(value, "Ã¡", "á"),
                   value = str_replace(value, "í¡", "á"),
+                  value = str_replace(value, "í¡", "á"),
                   value = str_replace(value, "íº", "ú"),
                   value = str_replace(value, "í³", "ó"),
                   value = str_replace(value, "Ãº", "ú"),
@@ -346,3 +347,17 @@ cap16_text <- cap16_text %>%
     name %in% c(89:93) ~ "28"
   )) %>% 
   funcion_limpiar()
+
+##---
+## Juntar toda la información
+##---
+
+constitucion <- bind_rows(cap1_text, cap2_text, cap3_text, cap4_text, cap5_text, cap6_text, cap7_text, cap8_text,
+          cap9_text, cap10_text, cap11_text, cap12_text, cap13_text, cap14_text, cap15_text, cap16_text)
+
+rm(cap1_text, cap2_text, cap3_text, cap4_text, cap5_text, cap6_text, cap7_text, cap8_text,
+   cap9_text, cap10_text, cap11_text, cap12_text, cap13_text, cap14_text, cap15_text, cap16_text, funcion_limpiar)
+
+readr::write_excel_csv(constitucion, "constitucion.csv")
+
+readr::read_csv("constitucion.csv") %>% View
