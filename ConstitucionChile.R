@@ -3,13 +3,12 @@ library(dplyr)
 library(stringr)
 library(readxl)
 
+# Planilla con los links a la información de la consitución
 links <- read_excel("links_constitucion.xlsx")
 
-## aa
-
-for (i in 1:15){
+# Descarga de la información y limpieza general de caractéres especiales
+for (i in 1:16){
   assign(paste0("cap", i, "_text"),
-         
          links[i, 2][[1]] %>% 
            read_html() %>% 
            html_nodes(".CUERPO p") %>% 
@@ -31,84 +30,40 @@ for (i in 1:15){
                   value = str_replace(value, " .-", "")) %>% 
            mutate(cap = links[i, 1][[1]],
                   nom_cap = links[i, 3][[1]])
-         
   )
+}
+
+rm(links, i)
+
+# Función para hacer arreglos finales
+funcion_limpiar <- function (x){
+  filter(x, !is.na(art)) %>% 
+    select(cap, nom_cap, art, texto = value)
 }
 
 ##-----------
 ## CAPÍTULO 1
 ##-----------
 
-web1 <- read_html("https://www.senado.cl/constitucion-politica-capitulo-i-bases-de-la-institucionalidad/senado/2012-01-16/093048.html")
-
-cap1 <- web1 %>% html_nodes("strong~ p")
-
-cap1_text <- cap1 %>% 
-  html_text() %>% 
-  tibble::enframe() %>% 
-  mutate(value = str_replace(value, "Â", " "),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã³", "ó"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ã¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "íº", "ú"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ãº", "ú"),
-         value = str_replace(value, "í©", "é"),
-         value = str_replace(value, "º.-", ""),
-         value = str_replace(value, "º .-", ""),
-         value = str_replace(value, " .-", "")) %>% 
-  mutate(cap = "capítulo 1",
-         nom_cap = "bases de la institucionalidad") %>% 
+cap1_text <- cap1_text %>% 
   mutate(art = case_when(
-    name %in% c(1,2,3,5,6) ~ "artículo 1",
-    name %in% c(9) ~ "artículo 2",
-    name %in% c(12,13,14) ~ "artículo 3",
-    name %in% c(17) ~ "artículo 4",
-    name %in% c(20,21) ~ "artículo 5",
-    name %in% c(24,25,26) ~ "artículo 6",
-    name %in% c(29,30,31) ~ "artículo 7",
-    name %in% c(34,35,36,37) ~ "artículo 8",
-    name %in% c(40,41,42) ~ "artículo 9"
+    name %in% c(3,4,5,7, 8) ~ "artículo 1",
+    name %in% c(11) ~ "artículo 2",
+    name %in% c(14,15,16) ~ "artículo 3",
+    name %in% c(19) ~ "artículo 4",
+    name %in% c(22,23) ~ "artículo 5",
+    name %in% c(26,27,28) ~ "artículo 6",
+    name %in% c(31,32,33) ~ "artículo 7",
+    name %in% c(36,37,38,39) ~ "artículo 8",
+    name %in% c(42,43,44) ~ "artículo 9"
   )) %>% 
-  filter(!is.na(art)) %>% 
-  select(cap, nom_cap, art, texto = value)
-
-rm(web1, cap1)
+  funcion_limpiar()
 
 ##-----------
 ## CAPÍTULO 2
 ##-----------
 
-web2 <- read_html("https://www.senado.cl/capitulo-ii-nacionalidad-y-ciudadania/senado/2012-01-16/093226.html")
-
-cap2 <- web2 %>% html_nodes(".CUERPO p")
-
-cap2_text <- cap2 %>% 
-  html_text() %>% 
-  tibble::enframe() %>% 
-  mutate(value = str_replace(value, "Â", " "),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã³", "ó"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ã¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "íº", "ú"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ãº", "ú"),
-         value = str_replace(value, "í©", "é"),
-         value = str_replace(value, "º.-", ""),
-         value = str_replace(value, "º .-", ""),
-         value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", "")
-         #value = str_replace(value, "[0-9]+", "")
-  ) %>% 
-  mutate(cap = "capítulo 2",
-         nom_cap = "nacionalidad y ciudadanía") %>% 
+cap2_text <- cap2_text %>% 
   mutate(art = case_when(
     name %in% c(2:6) ~ "artículo 10",
     name %in% c(9:13) ~ "artículo 11",
@@ -120,42 +75,13 @@ cap2_text <- cap2 %>%
     name %in% c(39:42) ~ "artículo 17",
     name %in% c(45:47) ~ "artículo 18"
   )) %>% 
-  filter(!is.na(art)) %>% 
-  select(cap, nom_cap, art, texto = value)
-
-rm(web2, cap2)
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 3
 ##---
 
-web3 <- read_html("https://www.senado.cl/capitulo-iii-de-los-derechos-y-deberes-constitucionales/senado/2012-01-16/093413.html")
-
-cap3 <- web3 %>% html_nodes(".CUERPO p")
-
-cap3_text <- cap3 %>% 
-  html_text() %>% 
-  tibble::enframe() %>% 
-  mutate(value = str_replace(value, "Â", " "),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã³", "ó"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ã¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "íº", "ú"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ãº", "ú"),
-         value = str_replace(value, "í©", "é"),
-         value = str_replace(value, "º.-", ""),
-         value = str_replace(value, "º .-", ""),
-         value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", "")
-         #value = str_replace(value, "[0-9]+", "")
-  ) %>% 
-  mutate(cap = "capítulo 3",
-         nom_cap = "de los derechos y deberes constitucionales") %>% 
+cap3_text <- cap3_text %>% 
   mutate(art = case_when(
     name %in% c(2:3) ~ "artículo 19",
     name %in% c(6) ~ "artículo 20",
@@ -163,103 +89,45 @@ cap3_text <- cap3 %>%
     name %in% c(12) ~ "artículo 22",
     name %in% c(15) ~ "artículo 23"
   )) %>% 
-  filter(!is.na(art)) %>% 
-  select(cap, nom_cap, art, texto = value)
-
-rm(web3, cap3)
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 4
 ##---
 
-web4 <- read_html("https://www.senado.cl/capitulo-iv-gobierno/senado/2012-01-16/094234.html")
-
-cap4 <- web4 %>% html_nodes("p+ p")
-
-cap4_text <- cap4 %>% 
-  html_text() %>% 
-  tibble::enframe() %>% 
-  mutate(value = str_replace(value, "Â", " "),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã³", "ó"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ã¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "íº", "ú"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ãº", "ú"),
-         value = str_replace(value, "í©", "é"),
-         value = str_replace(value, "º.-", ""),
-         value = str_replace(value, "º .-", ""),
-         value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", "")
-         #value = str_replace(value, "[0-9]+", "")
-  ) %>% 
-  mutate(cap = "capítulo 4",
-         nom_cap = "gobierno") %>% 
+cap4_text <- cap4_text %>% 
   mutate(art = case_when(
-    name %in% c(2) ~ "artículo 24",
-    name %in% c(5) ~ "artículo 25",
-    name %in% c(8) ~ "artículo 26",
-    name %in% c(11) ~ "artículo 27",
-    name %in% c(14) ~ "artículo 28",
-    name %in% c(17) ~ "artículo 29",
-    name %in% c(20) ~ "artículo 30",
-    name %in% c(23) ~ "artículo 31",
-    name %in% c(26) ~ "artículo 32",
-    name %in% c(31) ~ "artículo 33",
-    name %in% c(34) ~ "artículo 34",
-    name %in% c(37) ~ "artículo 35",
-    name %in% c(40) ~ "artículo 36",
-    name %in% c(43) ~ "artículo 37",
-    name %in% c(46) ~ "artículo 37 bis",
-    name %in% c(51) ~ "artículo 38",
-    name %in% c(56) ~ "artículo 39",
-    name %in% c(59) ~ "artículo 40",
-    name %in% c(62) ~ "artículo 41",
-    name %in% c(65) ~ "artículo 42",
-    name %in% c(68) ~ "artículo 43",
-    name %in% c(71) ~ "artículo 44",
-    name %in% c(74) ~ "artículo 45"
+    name %in% c(3) ~ "artículo 24",
+    name %in% c(6) ~ "artículo 25",
+    name %in% c(9) ~ "artículo 26",
+    name %in% c(12) ~ "artículo 27",
+    name %in% c(15) ~ "artículo 28",
+    name %in% c(18) ~ "artículo 29",
+    name %in% c(21) ~ "artículo 30",
+    name %in% c(24) ~ "artículo 31",
+    name %in% c(27) ~ "artículo 32",
+    name %in% c(32) ~ "artículo 33",
+    name %in% c(35) ~ "artículo 34",
+    name %in% c(38) ~ "artículo 35",
+    name %in% c(41) ~ "artículo 36",
+    name %in% c(44) ~ "artículo 37",
+    name %in% c(47) ~ "artículo 37 bis",
+    name %in% c(52) ~ "artículo 38",
+    name %in% c(57) ~ "artículo 39",
+    name %in% c(60) ~ "artículo 40",
+    name %in% c(63) ~ "artículo 41",
+    name %in% c(66) ~ "artículo 42",
+    name %in% c(69) ~ "artículo 43",
+    name %in% c(72) ~ "artículo 44",
+    name %in% c(75) ~ "artículo 45"
   )) %>% 
-  filter(!is.na(art)) %>% 
-  select(cap, nom_cap, art, texto = value)
-
-rm(web4, cap4)
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 5
 ##---
 
-web5 <- read_html("https://www.senado.cl/capitulo-v-congreso-nacional/senado/2012-01-16/100638.html")
-
-cap5 <- web5 %>% html_nodes(".CUERPO p")
-
-cap5_text <- cap5 %>% 
-  html_text() %>% 
-  tibble::enframe() %>% 
-  mutate(value = str_replace(value, "Â", " "),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã", "í"),
-         value = str_replace(value, "Ã³", "ó"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ã¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "í¡", "á"),
-         value = str_replace(value, "íº", "ú"),
-         value = str_replace(value, "í³", "ó"),
-         value = str_replace(value, "Ãº", "ú"),
-         value = str_replace(value, "í©", "é"),
-         value = str_replace(value, "º.-", ""),
-         value = str_replace(value, "º .-", ""),
-         value = str_replace(value, " .-", ""),
-         value = str_replace(value, ".-", "")
-         #value = str_replace(value, "[0-9]+", "")
-  ) %>% 
-  mutate(cap = "capítulo 5",
-         nom_cap = "congreso nacional") %>% 
+cap5_text <- cap5_text %>% 
   mutate(art = case_when(
     name %in% c(2) ~ "artículo 46",
     name %in% c(7) ~ "artículo 47",
@@ -293,47 +161,188 @@ cap5_text <- cap5 %>%
     name %in% c(109) ~ "artículo 74",
     name %in% c(112) ~ "artículo 75"
   )) %>% 
-  filter(!is.na(art)) %>% 
-  select(cap, nom_cap, art, texto = value)
-
-rm(web5, cap5)
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 6
 ##---
 
+cap6_text <- cap6_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 76",
+    name %in% c(5:11) ~ "artículo 77",
+    name %in% c(14) ~ "artículo 78",
+    name %in% c(17) ~ "artículo 79",
+    name %in% c(20) ~ "artículo 80",
+    name %in% c(23) ~ "artículo 81",
+    name %in% c(26) ~ "artículo 82"
+  )) %>% 
+  funcion_limpiar()
+
 ##---
 ## CAPÍTULO 7
 ##---
+
+cap7_text <- cap7_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 83",
+    name %in% c(5) ~ "artículo 84",
+    name %in% c(8) ~ "artículo 85",
+    name %in% c(11) ~ "artículo 86",
+    name %in% c(14) ~ "artículo 87",
+    name %in% c(17) ~ "artículo 88",
+    name %in% c(20) ~ "artículo 89",
+    name %in% c(23) ~ "artículo 90",
+    name %in% c(26) ~ "artículo 91"
+  )) %>% 
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 8
 ##---
 
+cap8_text <- cap8_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 92",
+    name %in% c(5,6) ~ "artículo 93",
+    name %in% c(9) ~ "artículo 94"
+  )) %>% 
+  funcion_limpiar()
+
 ##---
 ## CAPÍTULO 9
 ##---
+
+cap9_text <- cap9_text %>% 
+  mutate(art = case_when(
+    name %in% c(2:5) ~ "artículo 94 bis",
+    name %in% c(8) ~ "artículo 95",
+    name %in% c(11) ~ "artículo 96",
+    name %in% c(14) ~ "artículo 97"
+  )) %>% 
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 10
 ##---
 
+cap10_text <- cap10_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 98",
+    name %in% c(5) ~ "artículo 99",
+    name %in% c(8) ~ "artículo 100"
+  )) %>% 
+  funcion_limpiar()
+
 ##---
 ## CAPÍTULO 11
 ##---
+
+cap11_text <- cap11_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 101",
+    name %in% c(5) ~ "artículo 102",
+    name %in% c(8) ~ "artículo 103",
+    name %in% c(11) ~ "artículo 104",
+    name %in% c(14) ~ "artículo 105"
+  )) %>% 
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 12
 ##---
 
+cap12_text <- cap12_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 106",
+    name %in% c(5) ~ "artículo 107"
+  )) %>% 
+  funcion_limpiar()
+
 ##---
 ## CAPÍTULO 13
 ##---
+
+cap13_text <- cap13_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 108",
+    name %in% c(5) ~ "artículo 109"
+  )) %>% 
+  funcion_limpiar()
 
 ##---
 ## CAPÍTULO 14
 ##---
 
+cap14_text <- cap14_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 110",
+    name %in% c(7:13) ~ "artículo 111",
+    name %in% c(16) ~ "artículo 112",
+    name %in% c(19:28) ~ "artículo 113",
+    name %in% c(31) ~ "artículo 114",
+    name %in% c(34,35) ~ "artículo 115",
+    name %in% c(38,39) ~ "artículo 115 bis",
+    name %in% c(45) ~ "artículo 116",
+    name %in% c(47) ~ "artículo 117",
+    name %in% c(52:54) ~ "artículo 118",
+    name %in% c(57) ~ "artículo 119",
+    name %in% c(60) ~ "artículo 120",
+    name %in% c(63) ~ "artículo 121",
+    name %in% c(66) ~ "artículo 122",
+    name %in% c(71,72) ~ "artículo 123",
+    name %in% c(75:81) ~ "artículo 124",
+    name %in% c(84:86) ~ "artículo 125",
+    name %in% c(89) ~ "artículo 126",
+    name %in% c(94,95) ~ "artículo 126 bis"
+  )) %>% 
+  funcion_limpiar()
+
 ##---
 ## CAPÍTULO 15
 ##---
+
+cap15_text <- cap15_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "artículo 127",
+    name %in% c(5,6) ~ "artículo 128",
+    name %in% c(9) ~ "artículo 129"
+  )) %>% 
+  funcion_limpiar()
+
+##---
+## CAPÍTULO 16 - disposiciones transitorias
+##---
+
+cap16_text <- cap16_text %>% 
+  mutate(art = case_when(
+    name %in% c(2) ~ "1",
+    name %in% c(5) ~ "2",
+    name %in% c(8) ~ "3",
+    name %in% c(11) ~ "4",
+    name %in% c(14) ~ "5",
+    name %in% c(17) ~ "6",
+    name %in% c(20) ~ "7",
+    name %in% c(23) ~ "8",
+    name %in% c(26) ~ "9",
+    name %in% c(29) ~ "10",
+    name %in% c(32) ~ "11",
+    name %in% c(35) ~ "12",
+    name %in% c(38) ~ "13",
+    name %in% c(41) ~ "14",
+    name %in% c(44) ~ "15",
+    name %in% c(47) ~ "16",
+    name %in% c(50) ~ "17",
+    name %in% c(53) ~ "18",
+    name %in% c(56) ~ "19",
+    name %in% c(59) ~ "20",
+    name %in% c(62) ~ "21",
+    name %in% c(65) ~ "22",
+    name %in% c(68) ~ "23",
+    name %in% c(71:74) ~ "24",
+    name %in% c(77) ~ "25",
+    name %in% c(80:82) ~ "26",
+    name %in% c(85,86) ~ "27",
+    name %in% c(89:93) ~ "28"
+  )) %>% 
+  funcion_limpiar()
