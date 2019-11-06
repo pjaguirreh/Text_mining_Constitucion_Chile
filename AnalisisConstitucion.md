@@ -7,6 +7,7 @@ library(tidyr)
 library(forcats)
 library(kableExtra)
 library(readr)
+library(tidytext)
 
 constitucion <- read_csv("Planillas exportadas/constitucion.csv")
 ```
@@ -38,10 +39,13 @@ constitucion <- constitucion %>%
 
 ``` r
 constitucion %>% 
-  group_by("Capítulo" = cap) %>% 
+  unnest_tokens(palabras, inciso, drop = FALSE) %>% 
+  group_by("Capítulo" = cap,
+           "Nombre capítulo" = nom_cap) %>% 
   summarise(
     "Artículos" = n_distinct(art),
-    "Incisos" = n_distinct(inciso)
+    "Incisos" = n_distinct(inciso),
+    "Palabras" = n()
             ) %>% 
   kable(format = "html")
 ```
@@ -52,11 +56,17 @@ constitucion %>%
 <th style="text-align:left;">
 Capítulo
 </th>
+<th style="text-align:left;">
+Nombre capítulo
+</th>
 <th style="text-align:right;">
 Artículos
 </th>
 <th style="text-align:right;">
 Incisos
+</th>
+<th style="text-align:right;">
+Palabras
 </th>
 </tr>
 </thead>
@@ -65,16 +75,25 @@ Incisos
 <td style="text-align:left;">
 Capitulo 1
 </td>
+<td style="text-align:left;">
+bases de la institucionalidad
+</td>
 <td style="text-align:right;">
 9
 </td>
 <td style="text-align:right;">
 25
 </td>
+<td style="text-align:right;">
+837
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 2
+</td>
+<td style="text-align:left;">
+nacionalidad y ciudadania
 </td>
 <td style="text-align:right;">
 9
@@ -82,10 +101,16 @@ Capitulo 2
 <td style="text-align:right;">
 30
 </td>
+<td style="text-align:right;">
+886
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 3
+</td>
+<td style="text-align:left;">
+de los derechos y deberes constitucionales
 </td>
 <td style="text-align:right;">
 5
@@ -93,21 +118,33 @@ Capitulo 3
 <td style="text-align:right;">
 6
 </td>
+<td style="text-align:right;">
+5064
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 4
 </td>
+<td style="text-align:left;">
+gobierno
+</td>
 <td style="text-align:right;">
 23
 </td>
 <td style="text-align:right;">
 23
+</td>
+<td style="text-align:right;">
+3749
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 5
+</td>
+<td style="text-align:left;">
+congreso nacional
 </td>
 <td style="text-align:right;">
 31
@@ -115,10 +152,16 @@ Capitulo 5
 <td style="text-align:right;">
 36
 </td>
+<td style="text-align:right;">
+6309
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 6
+</td>
+<td style="text-align:left;">
+poder judicial
 </td>
 <td style="text-align:right;">
 7
@@ -126,21 +169,33 @@ Capitulo 6
 <td style="text-align:right;">
 13
 </td>
+<td style="text-align:right;">
+1382
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 7
 </td>
+<td style="text-align:left;">
+ministerio publico
+</td>
 <td style="text-align:right;">
 9
 </td>
 <td style="text-align:right;">
 9
+</td>
+<td style="text-align:right;">
+1062
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 8
+</td>
+<td style="text-align:left;">
+tribunal constitucional
 </td>
 <td style="text-align:right;">
 3
@@ -148,10 +203,16 @@ Capitulo 8
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:right;">
+2255
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 9
+</td>
+<td style="text-align:left;">
+servicio electoral y justicia electoral
 </td>
 <td style="text-align:right;">
 4
@@ -159,54 +220,84 @@ Capitulo 9
 <td style="text-align:right;">
 7
 </td>
+<td style="text-align:right;">
+749
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 10
 </td>
+<td style="text-align:left;">
+contraloria general de la republica
+</td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:right;">
+510
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 11
 </td>
+<td style="text-align:left;">
+fuerzas armadas, de orden y seguridad publica
+</td>
 <td style="text-align:right;">
 5
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:right;">
+455
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 12
 </td>
+<td style="text-align:left;">
+consejo de seguridad nacional
+</td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:right;">
+252
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 13
 </td>
+<td style="text-align:left;">
+banco central
+</td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:right;">
+151
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 14
+</td>
+<td style="text-align:left;">
+gobierno y administracion interior del estado
 </td>
 <td style="text-align:right;">
 19
@@ -214,10 +305,16 @@ Capitulo 14
 <td style="text-align:right;">
 48
 </td>
+<td style="text-align:right;">
+3036
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Capitulo 15
+</td>
+<td style="text-align:left;">
+reforma de la constitucion
 </td>
 <td style="text-align:right;">
 3
@@ -225,16 +322,25 @@ Capitulo 15
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:right;">
+594
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Disposiciones transitorias
+</td>
+<td style="text-align:left;">
+disposiciones transitorias
 </td>
 <td style="text-align:right;">
 28
 </td>
 <td style="text-align:right;">
 38
+</td>
+<td style="text-align:right;">
+2392
 </td>
 </tr>
 </tbody>
