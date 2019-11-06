@@ -13,6 +13,7 @@ library(tidyr)
 library(forcats)
 library(kableExtra)
 library(readr)
+library(tidytext)
 
 constitucion <- read_csv("Planillas exportadas/constitucion.csv")
 ```
@@ -31,11 +32,15 @@ constitucion <- constitucion %>%
 
 ```{r Número de artículos e incisos por capítulo}
 constitucion %>% 
-  group_by("Capítulo" = cap) %>% 
+  unnest_tokens(palabras, inciso, drop = FALSE) %>% 
+  group_by("Capítulo" = cap,
+           "Nombre capítulo" = nom_cap) %>% 
   summarise(
     "Artículos" = n_distinct(art),
-    "Incisos" = n_distinct(inciso)
+    "Incisos" = n_distinct(inciso),
+    "Palabras" = n()
             ) %>% 
   kable(format = "html")
 ```
+
 
