@@ -1,0 +1,22 @@
+---
+title: "Análisis de la constitución"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r cargar datos}
+source("Datos/CreacionDataSet.R", encoding = "UTF-8")
+```
+
+```{r Número de artículos e incisos por capítulo}
+constitucion %>% 
+  group_by("Capítulo" = cap) %>% 
+  summarise(
+    "Artículos" = n_distinct(art),
+    "Incisos" = n_distinct(inciso)
+            )
+```
+
