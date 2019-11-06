@@ -1,0 +1,6 @@
+Text mining - constitución política de Chile
+================
+
+**TRABAJO EN DESARROLLO**
+
+Análisis de texto del cuerpo de la [constitución política de Chile](https://www.senado.cl/constitucion-politica-capitulo-i-bases-de-la-institucionalidad/senado/2012-01-16/093048.html).
