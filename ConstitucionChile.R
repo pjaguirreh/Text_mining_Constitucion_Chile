@@ -39,7 +39,7 @@ rm(links, i)
 # Función para hacer arreglos finales
 funcion_limpiar <- function (x){
   filter(x, !is.na(art)) %>% 
-    select(cap, nom_cap, art, texto = value)
+    select(cap, nom_cap, art, inciso = value)
 }
 
 ##-----------
@@ -360,4 +360,3 @@ rm(cap1_text, cap2_text, cap3_text, cap4_text, cap5_text, cap6_text, cap7_text, 
 
 readr::write_excel_csv(constitucion, "constitucion.csv")
 
-readr::read_csv("constitucion.csv") %>% View
