@@ -7,8 +7,26 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-```{r cargar datos}
-source("Datos/CreacionDataSet.R", encoding = "UTF-8")
+```{r cargar librerías y datos}
+library(dplyr)
+library(tidyr)
+library(forcats)
+library(kableExtra)
+library(readr)
+
+constitucion <- read_csv("Planillas exportadas/constitucion.csv")
+```
+
+```{r}
+str(constitucion)
+```
+
+```{r}
+constitucion <- constitucion %>% 
+  mutate(
+    cap = as_factor(cap),
+    art = as_factor(art)
+  )
 ```
 
 ```{r Número de artículos e incisos por capítulo}
@@ -17,6 +35,7 @@ constitucion %>%
   summarise(
     "Artículos" = n_distinct(art),
     "Incisos" = n_distinct(inciso)
-            )
+            ) %>% 
+  kable(format = "html")
 ```
 
