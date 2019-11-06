@@ -87,6 +87,6 @@ constitucion_palabra <- constitucion %>%
   anti_join(stop) 
 
 constitucion_palabra %>% 
-  count(palabra, sort = TRUE) %>% View
+  count(palabra, sort = TRUE)
 ```
 
