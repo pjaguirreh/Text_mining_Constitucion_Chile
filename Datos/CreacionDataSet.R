@@ -358,6 +358,6 @@ constitucion <- bind_rows(cap1_text, cap2_text, cap3_text, cap4_text, cap5_text,
 rm(cap1_text, cap2_text, cap3_text, cap4_text, cap5_text, cap6_text, cap7_text, cap8_text,
    cap9_text, cap10_text, cap11_text, cap12_text, cap13_text, cap14_text, cap15_text, cap16_text, funcion_limpiar)
 
-readr::write_excel_csv(constitucion, "../Planillas exportadas/constitucion.csv")
-openxlsx::write.xlsx(constitucion, "../Planillas exportadas/constitucion.xlsx")
+readr::write_excel_csv(constitucion, "constitucion.csv")
+openxlsx::write.xlsx(constitucion, "constitucion.xlsx")
 
